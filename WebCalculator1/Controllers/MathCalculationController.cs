@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using WebCalculator1.Entity;
 
@@ -17,7 +18,7 @@ namespace WebCalculator1.Controllers
         }
 
         [HttpGet("/CreateMathCalculation")]
-        public double Get(double a, string action, double b)
+        public async Task<double> GetAsync(double a, string action, double b)
         {
             double result;
 
@@ -34,24 +35,20 @@ namespace WebCalculator1.Controllers
             {
                 case "+":
                     result = a + b;
-                    //action1.MathAction = "+";
                     action1.Result = result;
                     break;
                 case "-":
                     result = a - b;
-                    //action1.Subtraction = "-";
                     action1.Result = result;
                     break;
                 case "*":
                     result = a * b;
-                    //action1.Multiplication = "*";
                     action1.Result = result;
                     break;
                 case "/":
                     if (b != 0)
                     {
                         result = a / b;
-                        //action1.Division = "/";
                         action1.Result = result;
                         break;
                     }
@@ -69,19 +66,19 @@ namespace WebCalculator1.Controllers
             }
 
             context.Actions.Add(action1);
-            context.SaveChanges();
-
-
+            await context.SaveChangesAsync();
+            
             return result;
-
 
         }
 
 
         [HttpGet("/AllMathCalculation")]
-        public List<Entity.Action> GetAllAction()
+        public async Task<List<Entity.Action>> GetAllActionAsync()
         {
-            return this.context.Actions.ToList();
+           
+            return await this.context.Actions.ToListAsync();
+           
         }
 
     }

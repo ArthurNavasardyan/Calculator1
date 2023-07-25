@@ -1,0 +1,109 @@
+name: dockercompose2790881350217592106
+services:
+  db:
+    command:
+    - --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    image: mysql
+    networks:
+      default: null
+    restart: always
+  phpmyadmin:
+    environment:
+      PMA_ARBITRARY: "1"
+    image: phpmyadmin
+    networks:
+      default: null
+    ports:
+    - mode: ingress
+      target: 80
+      published: "8080"
+      protocol: tcp
+    restart: always
+  webcalculator1:
+    build:
+      context: C:\Users\User\source\repos\WebCalculator1
+      dockerfile: WebCalculator1\Dockerfile
+      labels:
+        com.microsoft.created-by: visual-studio
+        com.microsoft.visual-studio.project-name: WebCalculator1
+      target: base
+    container_name: WebCalculator1
+    entrypoint:
+    - C:\remote_debugger\x64\msvsmon.exe
+    - /noauth
+    - /anyuser
+    - /silent
+    - /nostatus
+    - /noclrwarn
+    - /nosecuritywarn
+    - /nofirewallwarn
+    - /nowowwarn
+    - /timeout:2147483646
+    - /LogDebuggeeOutputToStdOut
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ASPNETCORE_URLS: https://+:443;http://+:80
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      NUGET_FALLBACK_PACKAGES: ""
+      NUGET_PACKAGES: C:\.nuget\packages
+    image: webcalculator1:dev
+    labels:
+      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath c:\.nuget\packages  "C:\app\bin\Debug\net6.0\WebCalculator1.dll"'
+      com.microsoft.visualstudio.debuggee.killprogram: C:\remote_debugger\x64\utils\KillProcess.exe
+        dotnet.exe
+      com.microsoft.visualstudio.debuggee.program: '"C:\Program Files\dotnet\dotnet.exe"'
+      com.microsoft.visualstudio.debuggee.workingdirectory: C:\app
+    networks:
+      default: null
+    ports:
+    - mode: ingress
+      target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8001"
+      protocol: tcp
+    - mode: ingress
+      target: 443
+      protocol: tcp
+    volumes:
+    - type: bind
+      source: C:\Users\User\AppData\Roaming/ASP.NET/Https
+      target: C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\User\AppData\Roaming/Microsoft/UserSecrets
+      target: C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\User\source\repos\WebCalculator1\WebCalculator1
+      target: C:\app
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\User\onecoremsvsmon\17.5.20124.2323
+      target: C:\remote_debugger
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\User\source\repos\WebCalculator1
+      target: C:\src
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\User\.nuget\packages\
+      target: c:\.nuget\packages
+      read_only: true
+      bind:
+        create_host_path: true
+networks:
+  default:
+    name: dockercompose2790881350217592106_default
