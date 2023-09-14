@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using WebCalculator1.Entity;
+using WebCalculator1.Hubs;
+
 
 namespace WebCalculator1.Controllers
 {
@@ -11,10 +14,12 @@ namespace WebCalculator1.Controllers
     {
 
         public readonly Context context;
+        private readonly IHubContext<HubClass> hubContext;
 
-        public MathCalculationController(Context context)
+        public MathCalculationController(Context context, IHubContext<HubClass> hubContext)
         {
             this.context = context;
+            this.hubContext = hubContext;
         }
 
         [HttpGet("/CreateMathCalculation")]
@@ -25,6 +30,7 @@ namespace WebCalculator1.Controllers
 
 
             Entity.Action action1 = new Entity.Action();
+            //HubClass hub = new HubClass();
 
             action1.FirstNumber = a;
             action1.SecondNumber = b;
@@ -64,10 +70,12 @@ namespace WebCalculator1.Controllers
                     }
 
             }
-
+                        
             context.Actions.Add(action1);
             await context.SaveChangesAsync();
-            
+            //await hub.SendResult(result);
+            await hubContext.Clients.All.SendAsync("Send", result);
+
             return result;
 
         }

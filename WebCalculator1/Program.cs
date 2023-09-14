@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using WebCalculator1.Controllers;
 using WebCalculator1.Entity;
+using WebCalculator1.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext <Context>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ActionCS")));
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -27,6 +32,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<HubClass>("/hub");
 
 
 app.Run();
